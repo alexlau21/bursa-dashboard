@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bursa Buffett Screen — 25 Jun 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f4f0;
+  --bg2: #eceae4;
+  --card: #ffffff;
+  --border: #d8d5cc;
+  --text: #1a1a1a;
+  --text2: #555550;
+  --text3: #888880;
+  --mono: 'Courier New', monospace;
+  --green: #1a7c3e;
+  --green-bg: #d4f0dd;
+  --amber: #8a5c00;
+  --amber-bg: #fff0c2;
+  --purple: #5a2d82;
+  --purple-bg: #ecdeff;
+  --red: #8a1a1a;
+  --red-bg: #ffd9d9;
+  --yellow: #7a6000;
+  --yellow-bg: #fff3b0;
+  --grey: #555555;
+  --grey-bg: #e5e5e5;
+  --accent: #1a4a7c;
+  --shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a1a;
+    --bg2: #242424;
+    --card: #2a2a2a;
+    --border: #3a3a3a;
+    --text: #f0ede8;
+    --text2: #b0ada8;
+    --text3: #777770;
+    --green: #4dcc7a;
+    --green-bg: #0d3d20;
+    --amber: #ffc840;
+    --amber-bg: #3d2d00;
+    --purple: #c090ff;
+    --purple-bg: #2a1545;
+    --red: #ff8080;
+    --red-bg: #3d0d0d;
+    --yellow: #ffe066;
+    --yellow-bg: #3d3000;
+    --grey: #aaaaaa;
+    --grey-bg: #333333;
+    --accent: #6aabff;
+    --shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+/* HEADER */
+.header {
+  margin-bottom: 20px;
+}
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.header h1 span {
+  color: var(--accent);
+}
+.header-meta {
+  font-size: 12px;
+  color: var(--text3);
+  text-align: right;
+}
+.header-meta div { margin-bottom: 2px; }
+
+/* SUMMARY BAR */
+.summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.summary-count {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+.summary-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+}
+.s-green { color: var(--green); }
+.s-amber { color: var(--amber); }
+.s-purple { color: var(--purple); }
+.s-red { color: var(--red); }
+.s-blue { color: var(--accent); }
+
+/* FILTER BAR */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text2);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.filter-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* TABLE WRAPPER */
+.table-wrapper {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead tr {
+  background: var(--bg2);
+  border-bottom: 2px solid var(--border);
+}
+thead th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+thead th.right { text-align: right; }
+thead th.center { text-align: center; }
+
+tbody tr.stock-row {
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+tbody tr.stock-row:hover {
+  background: var(--bg2);
+}
+tbody tr.stock-row.expanded {
+  background: var(--bg2);
+}
+tbody tr.stock-row:last-child {
+  border-bottom: none;
+}
+
+/* GROUP SEPARATOR */
+tr.group-sep td {
+  padding: 6px 12px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text3);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 10px 12px;
+  vertical-align: middle;
+}
+td.right { text-align: right; }
+td.center { text-align: center; }
+
+/* RANK */
+.rank-num {
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 600;
+  font-family: var(--mono);
+}
+
+/* COMPANY */
+.company-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+}
+.company-ticker {
+  font-size: 10px;
+  color: var(--text3);
+  font-family: var(--mono);
+  margin-top: 1px;
+}
+
+/* PRICE */
+.price-val {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* PE / DIV */
+.num-val {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text2);
+}
+.na-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* SCORE DOTS */
+.score-dots {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.dot.filled { background: var(--accent); }
+
+/* VERDICT PILL */
+.pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill-green { background: var(--green-bg); color: var(--green); }
+.pill-amber { background: var(--amber-bg); color: var(--amber); }
+.pill-purple { background: var(--purple-bg); color: var(--purple); }
+.pill-red { background: var(--red-bg); color: var(--red); }
+
+/* ENTRY STATUS BADGE */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+.badge-grey { background: var(--grey-bg); color: var(--grey); }
+.badge-red { background: var(--red-bg); color: var(--red); }
+
+/* BUY ZONE */
+.buy-zone {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text2);
+}
+
+/* EXPAND ROW */
+tr.detail-row td {
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+}
+.detail-panel {
+  background: var(--bg);
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  border-top: 2px solid var(--accent);
+}
+@media (max-width: 800px) {
+  .detail-panel { grid-template-columns: 1fr; }
+}
+.detail-section label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text3);
+  display: block;
+  margin-bottom: 4px;
+}
+.detail-section .detail-text {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.detail-section .detail-risk {
+  font-size: 13px;
+  color: var(--red);
+  line-height: 1.5;
+}
+.buffett-quote {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text2);
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+  line-height: 1.6;
+}
+
+/* EXPAND ARROW */
+.expand-arrow {
+  font-size: 10px;
+  color: var(--text3);
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+.expanded .expand-arrow {
+  transform: rotate(180deg);
+}
+
+/* MOBILE SCROLL */
+@media (max-width: 900px) {
+  .table-wrapper { overflow-x: auto; }
+  table { min-width: 750px; }
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.8;
+}
+
+/* NO RESULTS */
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: var(--text3);
+  font-size: 14px;
+}
+
+/* MOAT badge */
+.moat-wide { font-size: 10px; color: var(--green); }
+.moat-narrow { font-size: 10px; color: var(--amber); }
+.moat-none { font-size: 10px; color: var(--red); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>🇲🇾 Bursa <span>Buffett</span> Screen</h1>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px;">Fundamental value analysis · Bursa Malaysia</div>
+      </div>
+      <div class="header-meta">
+        <div><strong>📅 Date:</strong> 25 Jun 2026, Thursday</div>
+        <div id="stock-count-meta"></div>
+        <div><strong>🕐 Updated:</strong> <span id="update-time"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY BAR -->
+  <div class="summary-bar" id="summary-bar">
+    <!-- filled by JS -->
+  </div>
+
+  <!-- FILTER BUTTONS -->
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all">All Stocks</button>
+    <button class="filter-btn" data-filter="Strong buy">💚 Strong Buy</button>
+    <button class="filter-btn" data-filter="Watch">🟡 Watch</button>
+    <button class="filter-btn" data-filter="Growth play">🟣 Growth Play</button>
+    <button class="filter-btn" data-filter="Pass">🔴 Pass</button>
+    <button class="filter-btn" data-filter="Buy now">⚡ Buy Now</button>
+    <button class="filter-btn" data-filter="Getting close">🎯 Getting Close</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrapper">
+    <table id="main-table">
+      <thead>
+        <tr>
+          <th style="width:36px;">#</th>
+          <th>Company</th>
+          <th class="right">Price (RM)</th>
+          <th class="right">P/E</th>
+          <th class="right">Div %</th>
+          <th class="center">Score</th>
+          <th class="center">Verdict</th>
+          <th class="center">When to Buy</th>
+          <th class="right">Buy Zone</th>
+          <th class="center" style="width:24px;"></th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+      </tbody>
+    </table>
+    <div class="no-results" id="no-results" style="display:none;">No stocks match this filter.</div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>Powered by Claude AI &nbsp;·&nbsp; Data: Google Finance / Yahoo Finance &nbsp;·&nbsp; Not financial advice</div>
+    <div style="margin-top:4px;">Investment decisions should be made with your own research and licensed financial advice. Past performance is not indicative of future results.</div>
+  </div>
+
+</div>
+
+<script>
+const DATA = [
+  {
+    "ticker": "PBBANK",
+    "name": "Public Bank",
+    "verdict": "Strong buy",
+    "score": 9,
+    "moat": "Wide",
+    "entry_status": "Buy now",
+    "buy_zone": "\u22645.00",
+    "price": 4.87,
+    "pe": 13.01,
+    "div": 4.62,
+    "one_line": "Best NPL ratio in SEA, 4.6% yield, P/E 13x",
+    "key_risk": "OPR cuts compress NIM short-term",
+    "buffett_quote": "Boring bank. Brilliant numbers. I would buy today.",
+    "gf_url": "https://www.google.com/finance/quote/PBBANK:KLSE"
+  },
+  {
+    "ticker": "MAYBANK",
+    "name": "Maybank",
+    "verdict": "Strong buy",
+    "score": 8,
+    "moat": "Wide",
+    "entry_status": "Buy now",
+    "buy_zone": "\u226411.00",
+    "price": 10.82,
+    "pe": 12.56,
+    "div": 5.82,
+    "one_line": "ASEAN's largest bank, 5.8% yield, P/E 12.5x",
+    "key_risk": "Regional credit cycle; NIM squeeze from rate cuts",
+    "buffett_quote": "Dominant franchise, fat yield. This is my kind of bank.",
+    "gf_url": "https://www.google.com/finance/quote/MAYBANK:KLSE"
+  },
+  {
+    "ticker": "CIMB",
+    "name": "CIMB",
+    "verdict": "Strong buy",
+    "score": 8,
+    "moat": "Wide",
+    "entry_status": "Buy now",
+    "buy_zone": "\u22647.80",
+    "price": 7.43,
+    "pe": 10.28,
+    "div": 5.4,
+    "one_line": "P/E 10x, 5.4% yield, ASEAN recovery play",
+    "key_risk": "Higher NPLs in Indonesia/Thailand operations",
+    "buffett_quote": "Double-digit ROE at 10x earnings with 5% yield. Yes please.",
+    "gf_url": "https://www.google.com/finance/quote/CIMB:KLSE"
+  },
+  {
+    "ticker": "HLBANK",
+    "name": "HL Bank",
+    "verdict": "Strong buy",
+    "score": 8,
+    "moat": "Wide",
+    "entry_status": "Buy now",
+    "buy_zone": "\u226422.50",
+    "price": 21.94,
+    "pe": 10.33,
+    "div": 4.47,
+    "one_line": "P/E 10x, 4.5% yield, fortress balance sheet",
+    "key_risk": "Modest loan growth; rate sensitivity on NIM",
+    "buffett_quote": "Conservative, well-run bank trading at bargain multiples.",
+    "gf_url": "https://www.google.com/finance/quote/HLBANK:KLSE"
+  },
+  {
+    "ticker": "RHBBANK",
+    "name": "RHB Bank",
+    "verdict": "Strong buy",
+    "score": 8,
+    "moat": "Narrow",
+    "entry_status": "Buy now",
+    "buy_zone": "\u22648.50",
+    "price": 8.29,
+    "pe": 10.45,
+    "div": 6.03,
+    "one_line": "P/E 10x, 6% yield, near 52w high still cheap",
+    "key_risk": "Merger speculation overhang; loan growth moderate",
+    "buffett_quote": "Six percent yield at 10x earnings is a gift. I'll take it.",
+    "gf_url": "https://www.google.com/finance/quote/RHBBANK:KLSE"
+  },
+  {
+    "ticker": "HLFG",
+    "name": "HL Fin Grp",
+    "verdict": "Strong buy",
+    "score": 8,
+    "moat": "Wide",
+    "entry_status": "Buy now",
+    "buy_zone": "\u226419.00",
+    "price": 18.18,
+    "pe": 6.17,
+    "div": 4.07,
+    "one_line": "P/E 6x, 4% yield, owns HL Bank at holding discount",
+    "key_risk": "Holding company discount may persist indefinitely",
+    "buffett_quote": "Buying HL Bank at a 30% discount through HLFG. Obvious.",
+    "gf_url": "https://www.google.com/finance/quote/HLFG:KLSE"
+  },
+  {
+    "ticker": "SUNWAY",
+    "name": "Sunway",
+    "verdict": "Strong buy",
+    "score": 7,
+    "moat": "Narrow",
+    "entry_status": "Buy now",
+    "buy_zone": "\u22645.40",
+    "price": 5.2,
+    "pe": 3.34,
+    "div": 1.15,
+    "one_line": "P/E 3x anomaly; diversified property-infra-health",
+    "key_risk": "P/E distorted by revaluation gains; recurring low",
+    "buffett_quote": "Conglomerate discount is real but this price is compelling.",
+    "gf_url": "https://www.google.com/finance/quote/SUNWAY:KLSE"
+  },
+  {
+    "ticker": "AMBANK",
+    "name": "AmBank",
+    "verdict": "Strong buy",
+    "score": 7,
+    "moat": "Narrow",
+    "entry_status": "Buy now",
+    "buy_zone": "\u22646.60",
+    "price": 6.49,
+    "pe": 10.22,
+    "div": 5.39,
+    "one_line": "P/E 10x, 5.4% yield, ROE improving trajectory",
+    "key_risk": "Smaller scale vs peers; acquisition target uncertainty",
+    "buffett_quote": "Cheap bank with a fat dividend. ROE trend is the right way.",
+    "gf_url": "https://www.google.com/finance/quote/AMBANK:KLSE"
+  },
+  {
+    "ticker": "SIME",
+    "name": "Sime Darby",
+    "verdict": "Strong buy",
+    "score": 7,
+    "moat": "Narrow",
+    "entry_status": "Buy now",
+    "buy_zone": "\u22642.20",
+    "price": 2.13,
+    "pe": 6.59,
+    "div": 6.1,
+    "one_line": "P/E 6.6x, 6.1% yield, BMW/industrial distribution moat",
+    "key_risk": "China slowdown hurts heavy equipment division",
+    "buffett_quote": "Six percent yield at 6.6x earnings. The market forgot this one.",
+    "gf_url": "https://www.google.com/finance/quote/SIME:KLSE"
+  },
+  {
+    "ticker": "ABMB",
+    "name": "Alliance Bnk",
+    "verdict": "Strong buy",
+    "score": 7,
+    "moat": "Narrow",
+    "entry_status": "Buy now",
+    "buy_zone": "\u22644.90",
+    "price": 4.76,
+    "pe": 9.66,
+    "div": 4.01,
+    "one_line": "P/E 9.7x, 4% yield, SME banking niche solid",
+    "key_risk": "SME credit risk rises in downturn; smaller scale",
+    "buffett_quote": "Small bank, big yield, cheap price. SME niche is defensible.",
+    "gf_url": "https://www.google.com/finance/quote/ABMB:KLSE"
+  },
+  {
+    "ticker": "TENAGA",
+    "name": "Tenaga",
+    "verdict": "Watch",
+    "score": 7,
+    "moat": "Wide",
+    "entry_status": "Getting close",
+    "buy_zone": "\u226413.50",
+    "price": 14.38,
+    "pe": 17.42,
+    "div": 3.69,
+    "one_line": "Regulated monopoly, 3.7% yield, P/E 17.4x fair",
+    "key_risk": "Regulatory tariff reviews; renewable capex overhang",
+    "buffett_quote": "Monopoly utility with steady cash. Price is just full.",
+    "gf_url": "https://www.google.com/finance/quote/TENAGA:KLSE"
+  },
+  {
+    "ticker": "PETGAS",
+    "name": "Petronas Gas",
+    "verdict": "Watch",
+    "score": 7,
+    "moat": "Wide",
+    "entry_status": "Getting close",
+    "buy_zone": "\u226416.00",
+    "price": 17.46,
+    "pe": 20.36,
+    "div": 4.12,
+    "one_line": "Regulated gas utility, 4.1% yield, P/E 20x full",
+    "key_risk": "Petronas capex cuts reduce throughput volumes",
+    "buffett_quote": "Rock-solid utility but I need a 15% margin of safety here.",
+    "gf_url": "https://www.google.com/finance/quote/PETGAS:KLSE"
+  },
+  {
+    "ticker": "WPRTS",
+    "name": "Westports",
+    "verdict": "Watch",
+    "score": 7,
+    "moat": "Wide",
+    "entry_status": "Getting close",
+    "buy_zone": "\u22645.50",
+    "price": 6.05,
+    "pe": 18.72,
+    "div": 3.61,
+    "one_line": "Port monopoly, 3.6% yield, P/E 19x slightly full",
+    "key_risk": "Throughput growth slowing; CT10 capex drag on FCF",
+    "buffett_quote": "Tollroad-like port moat. I just want a slightly better price.",
+    "gf_url": "https://www.google.com/finance/quote/WPRTS:KLSE"
+  },
+  {
+    "ticker": "MISC",
+    "name": "MISC",
+    "verdict": "Watch",
+    "score": 6,
+    "moat": "Narrow",
+    "entry_status": "Getting close",
+    "buy_zone": "\u22647.50",
+    "price": 8.1,
+    "pe": 20.83,
+    "div": 4.69,
+    "one_line": "LNG shipping moat, 4.7% yield, P/E 21x at limit",
+    "key_risk": "Tanker rate cyclicality; vessel impairment risk",
+    "buffett_quote": "Long-term LNG contracts give comfort, price is just full.",
+    "gf_url": "https://www.google.com/finance/quote/MISC:KLSE"
+  },
+  {
+    "ticker": "TM",
+    "name": "Telekom MY",
+    "verdict": "Watch",
+    "score": 6,
+    "moat": "Narrow",
+    "entry_status": "Getting close",
+    "buy_zone": "\u22646.80",
+    "price": 7.39,
+    "pe": 17.36,
+    "div": 3.69,
+    "one_line": "Unifi fibre monopoly, 3.7% yield, P/E 17x fair",
+    "key_risk": "5G wholesale model uncertainty; capex pressure",
+    "buffett_quote": "Fibre infrastructure moat is real. Price is about right.",
+    "gf_url": "https://www.google.com/finance/quote/TM:KLSE"
+  },
+  {
+    "ticker": "MAXIS",
+    "name": "Maxis",
+    "verdict": "Watch",
+    "score": 6,
+    "moat": "Narrow",
+    "entry_status": "Getting close",
+    "buy_zone": "\u22643.10",
+    "price": 3.28,
+    "pe": 16.0,
+    "div": 5.22,
+    "one_line": "5% yield, P/E 16x, high debt limits Buffett appeal",
+    "key_risk": "High D/E above 1.5x; postpaid ARPU pressure",
+    "buffett_quote": "The yield is nice but the debt load makes me uncomfortable.",
+    "gf_url": "https://www.google.com/finance/quote/MAXIS:KLSE"
+  },
+  {
+    "ticker": "PPB",
+    "name": "PPB Group",
+    "verdict": "Watch",
+    "score": 6,
+    "moat": "Narrow",
+    "entry_status": "Getting close",
+    "buy_zone": "\u22648.50",
+    "price": 9.32,
+    "pe": null,
+    "div": 4.51,
+    "one_line": "Wilmar stake is key value; 4.5% yield, no P/E odd",
+    "key_risk": "Wilmar Singapore earnings drag; flour milling mature",
+    "buffett_quote": "Holding company with Wilmar jewel inside. Discount is fair.",
+    "gf_url": "https://www.google.com/finance/quote/PPB:KLSE"
+  },
+  {
+    "ticker": "TIMECOM",
+    "name": "TIME dotCom",
+    "verdict": "Watch",
+    "score": 6,
+    "moat": "Narrow",
+    "entry_status": "Getting close",
+    "buy_zone": "\u22645.20",
+    "price": 6.0,
+    "pe": 25.54,
+    "div": 2.89,
+    "one_line": "Data centre & fibre growth, P/E 26x moderate risk",
+    "key_risk": "Small scale vs TM; data centre capex heavy near-term",
+    "buffett_quote": "Niche fi
